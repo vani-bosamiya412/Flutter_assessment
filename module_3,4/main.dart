@@ -15,6 +15,7 @@ class PetMoodTrackerCard extends StatefulWidget {
 class _PetMoodTrackerCardState extends State<PetMoodTrackerCard> {
 
   TextEditingController petNameController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
   String? petName;
 
   @override
@@ -26,34 +27,39 @@ class _PetMoodTrackerCardState extends State<PetMoodTrackerCard> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(18.0),
-        child: Column(
-          children: [
-            TextFormField(
-              controller: petNameController,
-              decoration: InputDecoration(
-                labelText: "Enter Pet Name",
-                border: OutlineInputBorder()
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              TextFormField(
+                controller: petNameController,
+                decoration: InputDecoration(
+                  labelText: "Enter Pet Name",
+                  border: OutlineInputBorder()
+                ),
+                validator: (value) {
+                  if(value == null || value.isEmpty) {
+                    return "Please enter pet name";
+                  }
+                  return null;
+                },
               ),
-              validator: (value) {
-                if(value == null || value.isEmpty) {
-                  return "Please enter pet name";
-                }
-                return null;
-              },
-            ),
-            SizedBox(height: 15,),
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  petName = petNameController.text;
-                });
-              },
-              child: Text("Show Mood Card", style: TextStyle(fontSize: 16),)
-            ),
-            SizedBox(height: 20,),
-            if(petName != null && petName!.isNotEmpty)
-              PetMoodCard(petName: petName!),
-          ],
+              SizedBox(height: 15,),
+              ElevatedButton(
+                onPressed: () {
+                  if(_formKey.currentState!.validate()) {
+                    setState(() {
+                      petName = petNameController.text;
+                    });
+                  }
+                },
+                child: Text("Show Mood Card", style: TextStyle(fontSize: 16),)
+              ),
+              SizedBox(height: 20,),
+              if(petName != null && petName!.isNotEmpty)
+                PetMoodCard(petName: petName!),
+            ],
+          ),
         ),
       ),
     );
